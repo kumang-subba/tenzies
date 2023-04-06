@@ -11,14 +11,14 @@ import Chip from "@mui/material/Chip";
 
 function App() {
   const [gameNums, setGameNums] = useState(gameArray());
-  const [gameWon, setGameWon] = useState(false);
+  const gameWon = gameNums.every((el, ind, arr) => el.number === arr[0].number);
   const [numberOfRolls, setNumberOfRolls] = useState(0);
   const [highScore, setHighScore] = useState(() => {
     return JSON.parse(localStorage.getItem("highscore")) || "";
   });
   const [currentScore, setCurrenscore] = useState("");
   const [startGame, setStartGame] = useState(false);
-  const [startTimer, setStartTimer] = useState(false);
+  const startTimer = startGame && !gameWon;
   const [time, setTime] = useState(0);
   const [gameTime, setGameTime] = useState("");
   const [timeScore, setTimeScore] = useState(() => {
@@ -35,15 +35,9 @@ function App() {
       setTimeScore(gameTime);
       localStorage.setItem("timer", JSON.stringify(gameTime));
     }
+    console.log("test 1");
   }, [currentScore, highScore, gameTime, timeScore]);
-  useEffect(() => {
-    if (gameNums.every((el, ind, arr) => el.number === arr[0].number)) {
-      setCurrenscore(numberOfRolls);
-      setGameTime(time);
-      setGameWon(true);
-      setStartTimer(false);
-    }
-  }, [gameNums, numberOfRolls, time]);
+
   const handleClick = (num) => {
     setGameNums((prev) =>
       prev.map((i) => {
@@ -52,14 +46,14 @@ function App() {
     );
   };
   const startGameButton = () => {
-    setStartTimer(true);
     setStartGame(true);
   };
   const handlePlayGame = () => {
     if (gameWon) {
+      setCurrenscore(numberOfRolls);
+      setGameTime(time);
       setTime(0);
       setNumberOfRolls(0);
-      setGameWon(false);
       setGameNums(gameArray());
       setStartGame(false);
     } else {
